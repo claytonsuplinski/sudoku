@@ -17,12 +17,28 @@ JL.sudoku.prototype.initialize = function( p ){
 
 	this.generate( JL.functions.clamp( Math.round( p.difficulty || JL.functions.random_number( 17, 81 ) ), 17, 81 ) );
 
-	this.board_grid = this.board_string_to_grid( this.board );
-
-	this.solutions = JL.functions.filter_duplicates([
+	var solutions = JL.functions.filter_duplicates([
 		this.solve( this.board ),
 		this.solve( this.board, true ),
-	]).map( b => self.board_string_to_grid( b ) );
+	]);
+
+	while( solutions.length > 1 ){
+		for( var i of JL.functions.shuffle_array( Object.keys( solutions[ 0 ] ).map( Number ) ) ){
+			if( solutions[ 0 ][ i ] != solutions[ 1 ][ i ] ){
+				this.board = this.board.substring( 0, i ) + solutions[ 0 ][ i ] + this.board.substring( i + 1 );
+				break;
+			}
+		}
+
+		solutions = JL.functions.filter_duplicates([
+			this.solve( this.board ),
+			this.solve( this.board, true ),
+		]);
+	}
+
+	this.solution = this.board_string_to_grid( solutions[ 0 ] );
+
+	this.board_grid = this.board_string_to_grid( this.board );
 }
 
 JL.sudoku.prototype.generate = function( difficulty ){
@@ -100,29 +116,6 @@ JL.sudoku.prototype.solve = function( board, reverse ){
 		return solution;
 	}
 	return false;
-};
-
-JL.sudoku.prototype.get_candidates = function( board ){	
-	var report = this.validate_board( board );
-	if( report !== true ) throw report;
-	
-	var candidates_map = this.get_candidates_map(board);
-	
-	if( !candidates_map ) return false;
-	
-	var rows    = [];
-	var cur_row = [];
-	var i = 0;
-	for( var square in candidates_map ){
-		var candidates = candidates_map[square];
-		cur_row.push( candidates );
-		if( i % 9 == 8 ){
-			rows.push( cur_row );
-			cur_row = [];
-		}
-		++i;
-	}
-	return rows;
 };
 
 JL.sudoku.prototype.get_candidates_map = function(board){

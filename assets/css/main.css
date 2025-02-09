@@ -13,7 +13,7 @@ html{
 }
 
 table.board{
-	margin:10px auto;
+	margin:5px auto;
 	border-collapse:collapse;
 	table-layout:fixed;
 }
@@ -26,12 +26,12 @@ table.board td{
 
 table.board table.cell-notes,
 table.board td{
-	width     :42px !important;
-	height    :42px !important;
-	min-width :42px !important;
-	min-height:42px !important;
-	max-width :42px !important;
-	max-height:42px !important;
+	width     :36px !important;
+	height    :36px !important;
+	min-width :36px !important;
+	min-height:36px !important;
+	max-width :36px !important;
+	max-height:36px !important;
 	box-sizing:border-box;
 	padding:0;
 }
@@ -47,7 +47,7 @@ table.board td.original-value{
 
 table.board td.correct{ color:#afa; }
 table.board td.incorrect{ color:#faa; }
-table.board td.selected{ background:#061327; }
+table.board td.selected{ background:#0b306b; }
 
 table.board table.cell-notes{
 	margin:0;
@@ -59,12 +59,12 @@ table.board table.cell-notes{
 table.board table.cell-notes td{
 	border:0;
 	font-size:8px;
-	width     :14px !important;
-	height    :14px !important;
-	min-width :14px !important;
-	min-height:14px !important;
-	max-width :14px !important;
-	max-height:14px !important;
+	width     :12px !important;
+	height    :12px !important;
+	min-width :12px !important;
+	min-height:12px !important;
+	max-width :12px !important;
+	max-height:12px !important;
 	color:#bcbc2a;
 	box-sizing:border-box;
 }
@@ -88,8 +88,8 @@ table.board table.cell-notes td{
 
 .buttons .button.number{
 	background:#222;
-	padding:10px 15px;
-	margin:0 5px;
+	padding:10px;
+	margin:0 1px;
 	font-size:18px;
 }
 
@@ -104,18 +104,17 @@ table.board table.cell-notes td{
 
 .buttons .button.number.note{
 	font-size:10px;
-	padding:12.5px 15px;
 }
 
-#note-button-1{ padding-top:5px; padding-bottom:20px; padding-left:5px; padding-right:25px; }
-#note-button-2{ padding-top:5px; padding-bottom:20px; }
-#note-button-3{ padding-top:5px; padding-bottom:20px; padding-left:25px; padding-right:5px; }
-#note-button-4{ padding-left:5px; padding-right:25px; }
+#note-button-1{ padding-top:5px; padding-bottom:15px; padding-left:5px; padding-right:15px; }
+#note-button-2{ padding-top:5px; padding-bottom:15px; }
+#note-button-3{ padding-top:5px; padding-bottom:15px; padding-left:15px; padding-right:5px; }
+#note-button-4{ padding-left:5px; padding-right:15px; }
 #note-button-5{ }
-#note-button-6{ padding-left:25px; padding-right:5px; }
-#note-button-7{ padding-top:20px; padding-bottom:5px; padding-left:5px; padding-right:25px; }
-#note-button-8{ padding-top:20px; padding-bottom:5px; }
-#note-button-9{ padding-top:20px; padding-bottom:5px; padding-left:25px; padding-right:5px; }
+#note-button-6{ padding-left:15px; padding-right:5px; }
+#note-button-7{ padding-top:15px; padding-bottom:5px; padding-left:5px; padding-right:15px; }
+#note-button-8{ padding-top:15px; padding-bottom:5px; }
+#note-button-9{ padding-top:15px; padding-bottom:5px; padding-left:15px; padding-right:5px; }
 
 .win{
 	background:linear-gradient( 90deg, transparent, #339 40%, #339 60%, transparent );

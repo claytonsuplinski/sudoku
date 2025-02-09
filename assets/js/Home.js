@@ -9,7 +9,7 @@ PR.home.load = function(){
 PR.home.new_game = function( p ){
 	var p = p || {};
 
-	this.game = new JL.sudoku({ difficulty : p.difficulty || JL.functions.random_number( 25, 30 ) });
+	this.game = new JL.sudoku({ difficulty : p.difficulty || 17 });
 
 	this.values = [];
 	this.notes  = [];
@@ -20,16 +20,11 @@ PR.home.new_game = function( p ){
 			var val = this.game.board[ x + ( 9 * y ) ];
 			row.push( val );
 			row_notes.push({});
-			// TODO : test
 			// row_notes.push({ 1 : 1, 2 : 1, 3 : 1, 4 : 1, 5 : 1, 6 : 1, 7 : 1, 8 : 1, 9 : 1, });
 		}
 		this.values.push( row );
 		this.notes.push( row_notes );
 	}
-
-	console.log( this.game.board );
-	console.log( this.game.solutions );
-	console.log( this.game.board_string_to_grid() );
 
 	this.update_completed_numbers();
 
@@ -42,10 +37,59 @@ PR.home.show_new_game_popup = function(){
 };
 
 PR.home.add_notes = function(){
-	var notes_to_add = this.game.get_candidates( this.game.board_grid_to_string( this.values ) );
+	// var notes_to_add = this.game.get_candidates( this.game.board_grid_to_string( this.values ) );
 	for( var y = 0; y < 9; y++ ){
 		for( var x = 0; x < 9; x++ ){
-			for( var i of notes_to_add[ y ][ x ] ) this.notes[ y ][ x ][ i ] = true;
+			// for( var i of notes_to_add[ y ][ x ] ) this.notes[ y ][ x ][ i ] = true;
+			if( this.values[ y ][ x ] == '.' ){
+				this.notes[ y ][ x ] = Object.assign( this.notes[ y ][ x ], this.get_cell_auto_notes( x, y ) );
+				console.log( this.notes[ y ][ x ] );
+			}
+		}
+	}
+	this.draw();
+};
+
+PR.home.get_cell_auto_notes = function( x, y ){
+	var notes = {};
+
+	var box_x_start = 3 * Math.floor( x / 3 );
+	var box_y_start = 3 * Math.floor( y / 3 );
+
+	var box_x_end = box_x_start + 3;
+	var box_y_end = box_y_start + 3;
+
+	for( var v = 1; v <= 9; v++ ){
+		if( this.values.map( r => r[ x ] ).find( _ => _ == v ) ) continue;
+
+		if( this.values[ y ].find( _ => _ == v ) ) continue;
+
+		var in_box = false;
+		for( var b_x = box_x_start; b_x < box_x_end; b_x++ ){
+			if( in_box ) break;
+			for( var b_y = box_y_start; b_y < box_y_end; b_y++ ){
+				if( this.values[ b_y ][ b_x ] == v ){
+					in_box = true;
+					break;
+				}
+			}
+		}
+		
+		if( !in_box ) notes[ v ] = true;
+	}
+
+	return notes;
+};
+
+PR.home.clean_up_notes = function(){
+	for( var y = 0; y < 9; y++ ){
+		for( var x = 0; x < 9; x++ ){
+			if( this.values[ y ][ x ] == '.' ){
+				var auto_notes = this.get_cell_auto_notes( x, y );
+				for( var k in this.notes[ y ][ x ] ){
+					if( !auto_notes[ k ] ) delete this.notes[ y ][ x ][ k ];
+				}
+			}
 		}
 	}
 	this.draw();
@@ -75,6 +119,7 @@ PR.home.apply_number = function( x, y ){
 				if( this.values[ y ][ x ] == this.selected_number ) this.values[ y ][ x ] = '.';
 				else                                                this.values[ y ][ x ] = this.selected_number;
 				this.update_completed_numbers();
+				this.clean_up_notes();
 				break;
 			case 'note':
 				this.notes[ y ][ x ][ this.selected_number ] = !this.notes[ y ][ x ][ this.selected_number ];
@@ -87,7 +132,7 @@ PR.home.apply_number = function( x, y ){
 
 PR.home.update_completed_numbers = function(){
 	var curr_board_string = this.game.board_grid_to_string( this.values );
-	var solution_string   = this.game.board_grid_to_string( this.game.solutions[ 0 ] );
+	var solution_string   = this.game.board_grid_to_string( this.game.solution );
 
 	this.completed_numbers = [];
 
@@ -111,15 +156,11 @@ PR.home.update_completed_numbers = function(){
 };
 
 PR.home.is_valid_value = function( x, y, val ){
-	// TODO : Consider implementing checks for multiple solutions.
-	// return this.game.solutions.find(function( s ){
-	// 	return ( s[ y ][ x ] == val );
-	// });
-	return this.game.solutions[ 0 ][ y ][ x ] == val;
+	return this.game.solution[ y ][ x ] == val;
 };
 
 PR.home.has_won = function(){
-	return( this.game.board_grid_to_string( this.values ) == this.game.board_grid_to_string( this.game.solutions[ 0 ] ) );
+	return( this.game.board_grid_to_string( this.values ) == this.game.board_grid_to_string( this.game.solution ) );
 };
 
 PR.home.draw = function(){
